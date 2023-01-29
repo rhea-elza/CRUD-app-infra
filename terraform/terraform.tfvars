@@ -1,0 +1,14 @@
+gcp_project_name = "sadaindia-tvm-poc-de"
+gke_zones= ["us-central1-c"]
+gke_regions = "us-central1"
+project_id = "sadaindia-tvm-poc-de"
+gke_cluster_name = "cluster-2"
+gke_default_nodepool_name ="node-pool1"
+gcp_region = "us-central1"
+gcp_zone= "us-central1-c"
+vpc_name = "test-net-1"
+db_instance_name = "instance-1"
+instance_type="n1-standard-1"
+vpc_link = "google_compute_network.test-net-1.self_link"
+disk_size = 10
+db_depends_on ="module.vpc"
