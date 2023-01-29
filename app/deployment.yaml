@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flask-app-406
+  name: flask-app-601 #deployment name
 spec:
-  replicas: 1
+  replicas: 1 #how many replicaSets to create
   selector:
     matchLabels:
       app: hello
@@ -12,6 +12,7 @@ spec:
       labels:
         app: hello
     spec:
+      serviceAccountName: rheauc2-sa # KSA name
       containers:
       - name: hello-app
         # Replace $LOCATION with your Artifact Registry location (e.g., us-west1).
@@ -71,15 +72,15 @@ spec:
           - "-instances=sadaindia-tvm-poc-de:us-central1:main-primary-1=tcp:3306"
 
           # This flag specifies where the service account key can be found
-          - "-credential_file=/secrets/cloudsql/service_account.json"
+          #- "-credential_file=/secrets/cloudsql/service_account.json"
         securityContext:
           # The default Cloud SQL proxy image runs as the
           # "nonroot" user and group (uid: 65532) by default.
           runAsNonRoot: true
-        volumeMounts:
-        - name: your-sa-secret
-          mountPath: /secrets/cloudsql
-          readOnly: true
+        # volumeMounts:
+        # - name: your-sa-secret
+        #   mountPath: /secrets/cloudsql
+        #   readOnly: true
         # Resource configuration depends on an application's requirements. You
         # should adjust the following values based on what your application
         # needs. For details, see https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
@@ -88,12 +89,8 @@ spec:
             # The proxy's memory use scales linearly with the number of active
             # connections. Fewer open connections will use less memory. Adjust
             # this value based on your application's requirements.
-            memory: "100Mi"
+            memory: "2Gi"
             # The proxy's CPU use scales linearly with the amount of IO between
             # the database and the application. Adjust this value based on your
             # application's requirements.
-            cpu:    "100m"
-      volumes:
-      - name: your-sa-secret
-        secret:
-          secretName: your-sa-secret
+            cpu:    "1"

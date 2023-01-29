@@ -22,11 +22,11 @@ app.add_url_rule('/database', view_func=routes.view_database)
 app.add_url_rule('/modify<the_id>/<modified_category>', methods=all_methods, view_func=routes.modify_database)
 app.add_url_rule('/delete<the_id>', methods=all_methods, view_func=routes.delete)
 
-db_hosted_ip = os.environ["HOSTED_IP"]  
-db_username = os.environ["CLOUD_SQL_USERNAME"] 
-db_password = os.environ["CLOUD_SQL_PASSWORD"]  
-db_name = os.environ["CLOUD_SQL_DATABASE_NAME"]  
-db_port = os.environ["DB_PORT"]
+db_hosted_ip = os.environ["HOSTED_IP"]  #change to 127.0.0.1 when connecting via SQL proxy or to your private sql instance ip address when connecting using private ip
+db_username = os.environ["CLOUD_SQL_USERNAME"] #SQL instance database username
+db_password = os.environ["CLOUD_SQL_PASSWORD"]  #SQL instance database password
+db_name = os.environ["CLOUD_SQL_DATABASE_NAME"]  #SQL instance database name
+db_port = os.environ["DB_PORT"] #3306
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # no warning messages
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{db_username}:{db_password}@{db_hosted_ip}:{db_port}/{db_name}" # for using the sqlite database
