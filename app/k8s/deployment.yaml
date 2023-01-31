@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-app-601 #deployment name
+spec:
+  replicas: 1 #how many replicaSets to create
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      serviceAccountName: rheauc2-sa # KSA name
+      containers:
+      - name: hello-app
+        # Replace $LOCATION with your Artifact Registry location (e.g., us-west1).
+        # Replace $GCLOUD_PROJECT with your project ID.
+        image: us-central1-docker.pkg.dev/sadaindia-tvm-poc-de/hello-repo/simple-flask-form:latest
+        # This app listens on port 8080 for web traffic by default.
+        ports:
+        - containerPort: 8080
+          
+        env:
+          - name: PORT
+            value: "8080"
+          - name: CLOUD_SQL_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: user-name
+                key: username
+          - name: CLOUD_SQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: user-pass
+                key: password
+          - name: CLOUD_SQL_DATABASE_NAME
+            valueFrom:
+              secretKeyRef:
+                name: db-name
+                key: database
+          - name: HOSTED_IP
+            valueFrom:
+              secretKeyRef:
+                name: instance-ip
+                key: db_host
+          - name: DB_PORT
+            valueFrom:
+              secretKeyRef:
+                name: db-port
+                key: dbport
+      - name: cloud-sql-proxy
+        # It is recommended to use the latest version of the Cloud SQL proxy
+        # Make sure to update on a regular schedule!
+        image: us-central1-docker.pkg.dev/sadaindia-tvm-poc-de/hello-repo/simple-flask-form-image:proxy # make sure the use the latest version
+        command:
+          - "/cloud_sql_proxy"
+
+          # If connecting from a VPC-native GKE cluster, you can use the
+          # following flag to have the proxy connect over private IP
+          - "-ip_address_types=PRIVATE"
+
+          # By default, the proxy will write all logs to stderr. In some
+          # environments, anything printed to stderr is considered an error. To
+          # disable this behavior and write all logs to stdout (except errors
+          # which will still go to stderr), use:
+          - "-log_debug_stdout"
+
+          # Replace DB_PORT with the port the proxy should listen on
+          # Defaults: MySQL: 3306, Postgres: 5432, SQLServer: 1433
+          - "-instances=sadaindia-tvm-poc-de:us-central1:main-primary-1=tcp:3306"
+
+          # This flag specifies where the service account key can be found
+          #- "-credential_file=/secrets/cloudsql/service_account.json"
+        securityContext:
+          # The default Cloud SQL proxy image runs as the
+          # "nonroot" user and group (uid: 65532) by default.
+          runAsNonRoot: true
+        # volumeMounts:
+        # - name: your-sa-secret
+        #   mountPath: /secrets/cloudsql
+        #   readOnly: true
+        # Resource configuration depends on an application's requirements. You
+        # should adjust the following values based on what your application
+        # needs. For details, see https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+        resources:
+          requests:
+            # The proxy's memory use scales linearly with the number of active
+            # connections. Fewer open connections will use less memory. Adjust
+            # this value based on your application's requirements.
+            memory: "2Gi"
+            # The proxy's CPU use scales linearly with the amount of IO between
+            # the database and the application. Adjust this value based on your
+            # application's requirements.
+            cpu:    "1"

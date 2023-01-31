@@ -1,0 +1,16 @@
+steps:
+  # Build the Docker image from the Dockerfile
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/sadaindia-tvm-poc-de/my-image', '.']
+  
+  # Push the Docker image to Google Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/sadaindia-tvm-poc-de/my-image']
+
+  # Apply the deployment to the GKE cluster
+  - name: 'gcr.io/cloud-builders/kubectl'
+    env:
+    - 'CLOUDSDK_COMPUTE_Region=us-central1'
+    - 'CLOUDSDK_CONTAINER_CLUSTER=uc2-flask-app-cluster'
+    - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
+    args: ['apply', '-f', 'k8s/']
