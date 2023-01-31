@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: flask-app-601 #deployment name
+  name: flask-app-1000 #deployment name
 spec:
   replicas: 1 #how many replicaSets to create
   selector:
@@ -17,7 +17,7 @@ spec:
       - name: hello-app
         # Replace $LOCATION with your Artifact Registry location (e.g., us-west1).
         # Replace $GCLOUD_PROJECT with your project ID.
-        image: us-central1-docker.pkg.dev/sadaindia-tvm-poc-de/hello-repo/simple-flask-form:latest
+        image: gcr.io/sadaindia-tvm-poc-de/my-image:latest
         # This app listens on port 8080 for web traffic by default.
         ports:
         - containerPort: 8080
