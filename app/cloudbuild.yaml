@@ -16,4 +16,4 @@ steps:
     - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
     args: ['apply', '-f', 'k8s/']
 source:
-  dir: app
+  dir: /workspace/app
