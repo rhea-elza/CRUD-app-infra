@@ -1,7 +1,7 @@
 steps:
   # Build the Docker image from the Dockerfile
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/sadaindia-tvm-poc-de/my-image', '.']
+    args: ['build', '-t', 'gcr.io/sadaindia-tvm-poc-de/my-image', './app']
 
  
   # Push the Docker image to Google Container Registry
@@ -15,5 +15,4 @@ steps:
     - 'CLOUDSDK_CONTAINER_CLUSTER=uc2-flask-app-cluster'
     - 'CLOUDSDK_COMPUTE_ZONE=us-central1'
     args: ['apply', '-f', 'k8s/']
-source:
-  dir: /workspace/app
+
