@@ -78,3 +78,9 @@ module "db" {
 
 }
 data "google_client_config" "default" {}
+
+module "build" {
+  source = "./modules/build"
+  project_id=var.project_id
+
+}
